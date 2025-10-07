@@ -1,5 +1,6 @@
 import prisma from "../prisma/client.js";
 import bcrypt from "bcrypt";
+import { sendErrorToExternalRoute } from "../utils/sendError.js";
 
 export async function registerHandler(request, reply) {
   try {
@@ -23,6 +24,7 @@ export async function registerHandler(request, reply) {
       .send({ message: "Usuário registrado com sucesso!" });
   } catch (error) {
     console.error(error);
+    await sendErrorToExternalRoute(error);
     return reply.status(500).send({ message: "Erro ao registrar usuário" });
   }
 }

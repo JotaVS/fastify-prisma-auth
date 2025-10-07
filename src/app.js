@@ -12,8 +12,8 @@ fastify.register(authRoutes);
 
 const start = async () => {
   try {
-    await fastify.listen({ port: 3000 });
-    console.log("Servidor rodando na porta 3000");
+    await fastify.listen({ port: 4000 });
+    console.log("Servidor rodando na porta 4000");
   } catch (err) {
     fastify.log.error(err);
     process.exit(1);
