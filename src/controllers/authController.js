@@ -2,26 +2,29 @@ import prisma from "../prisma/client.js";
 import bcrypt from "bcrypt";
 
 export async function registerHandler(request, reply) {
-  const { email, password } = request.body;
+  try {
+    const { email, password } = request.body;
 
-  const existingUser = await prisma.user.findUnique({
-    where: { email },
-  });
+    const existingUser = await prisma.user.findUnique({
+      where: { email },
+    });
 
-  if (existingUser) {
-    return reply.status(400).send({ message: "Email já cadastrado" });
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const newUser = await prisma.user.create({
+      data: {
+        email,
+        password: hashedPassword,
+      },
+    });
+
+    return reply
+      .status(201)
+      .send({ message: "Usuário registrado com sucesso!" });
+  } catch (error) {
+    console.error(error);
+    return reply.status(500).send({ message: "Erro ao registrar usuário" });
   }
-
-  const hashedPassword = await bcrypt.hash(password, 10);
-
-  const newUser = await prisma.user.create({
-    data: {
-      email,
-      password: hashedPassword,
-    },
-  });
-
-  return reply.status(201).send({ message: "Usuário registrado com sucesso!" });
 }
 
 export async function loginHandler(request, reply) {
